@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Repack Update Notes</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+	<link rel="icon" type="image/png" href="favicon.png">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f0f0f0;
+			padding: 20px;
+		}
+		h2 {
+			font-size: 24px;
+			margin: 30px 0 20px;
+			color: #03DD52;
+			font-weight: bold;
+		}
+		h3 {
+			font-size: 35px;
+			margin: 30px 0 20px;
+			color: #FFFFFF;
+			font-weight: bold;
+		}
+		p {
+			font-size: 16px;
+			line-height: 1.5;
+			color: #666;
+		}
+		.article {
+			background-color: #123;
+			padding: 20px;
+			margin-bottom: 30px;
+			box-shadow: 0 0 5px #123;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="article">
+		<header>
+			<div style="text-align: center;">
+				<a href="https://zaicopx.github.io/"><img src="logo.png" alt="Logo of My Website"></a>
+			</div>
+			<h1 style="text-align:center;">Repack Update Notes</h1>
+		</header>
+		<div class="article">
+		<h3 style="text-align:center; text-decoration: underline;">Update 041023-xxxx</h3>
+		<h2>NPCBots</h2>
+<ul>
+  <li>Fix PvP debug messages for non-PvP wandering bots.</li>
+  <li>Fix wandering bots never dropping chased targets.</li>
+  <li>Add XP reward for killing wandering bots with greatly increased rate.</li>
+  <li>Dark Ranger: fix Black Arrow not being counted as a debuff.</li>
+  <li>Add wandering bot kill money + item(s) reward. Up to 2 items from bot's equips may drop with a small chance.</li>
+  <li>Fix 'AuberdineSpawn' WP (993) missing spawn flag.</li>
+  <li>Removes unused creature 290 data.</li>
+  <li>Fix Mirror Image target selection if casted by creature.</li>
+  <li>Fix missing wanderer check when dereferencing current travel node.</li>
+  <li>Fix not using Fireball / Frostbolt at levels 1-9 when initted with Arcane spec.</li>
+  <li>Fix a crash caused by nullptr dereference in Unit::SetInCombatState()</li>
+  <li>Optimize lambda captures in bot_necromancer_ai.cpp</li>
+  <li>Fix Svalna crash.</li>
+  <li>Fix Druid's Bash cast chain.</li>
+  <li>Fix combat timer for non-PvP bots.</li>
+  <li>Fix Mage not using Frostbolt above level 10.</li>
+  <li>Fix Mage not using Arcane Missiles when Missile Barrage is already unlocked but Arcane Blast isn't.</li>
+  <li>Fix .npcbot dump write command after wandering bots implementation, also fix always writing to file even if command failed.</li>
+</ul>
+		</div>
+		<div class="article">
+		<h2>Scripts</h2>
+			<ul>
+  <li>Prevent pets from pulling Ikiss from behind doors.</li>
+  <li>Fix Trial of the Naaru: Tenacity complete condition should now only complete on heroic mode.</li>
+  <li>Fixed locking Shad of Aran entrance door.</li>
+  <li>Correct Baron Geddon Inferno damage values.</li>
+  <li>VioletHold: Remove hardcode and add some of the missing gossip.</li>
+  <li>Script Sindragosa's respawn/waypoints.</li>
+  <li>Allow game masters to skip boss checks.</li>
+  <li>Added waypoint movement to Quagmirran.</li>
+  <li>Prevent Sindragosa's landing trigger from firing during combat.</li>
+  <li>Fix Harbringer Skyriss not splitting if casting abilities.</li>
+  <li>Fix possible crash if bosses engage offline players.</li>
+  <li>Fix Sindragosa's icewall poping up prematurely.</li>
+  <li>Remove Skyriss' immunity at reset.</li>
+  <li>Correct timers and add missing events.</li>
+  <li>Fix Putricide crash.</li>
+</ul>
+		</div>
+				<div class="article">
+		<h2>Database</h2>
+				<ul>
+<li>Fix Pet::resetTalentsForAllPetsOf for stabled pets.</li>
+<li>Fix Mote of Shadow dropping from wrong creatures.</li>
+<li>Grunda Bronzewing is now mounted.</li>
+<li>Some immunities in Arcatraz.</li>
+<li>Prevent infinite spawning of [DND]Spirit 1.</li>
+<li>Fix Arcatraz Sentinels spawning at 1 health.</li>
+<li>Change castflags for Death Watcher's Death Count.</li>
+<li>Fix Warlord Kalithresh Normal Loot.</li>
+<li>Yet another fix for Teron Gorefiend not resetting.</li>
+<li>Lok'delar and Rhok'delar should not be mutually exclusive.</li>
+<li>Deadmines Cleaver should only drop from Defias Henchman.</li>
+<li>Added 8sec cooldown to Stormchops proc.</li>
+<li>Remove deprecated bytes2 flags.</li>
+<li>Slow down Darkshire City Hall broadcasts.</li>
+<li>Correct Bael'dun creatures not fleeing.</li>
+<li>Port The Knife Revealed rp from Trinity.</li>
+<li>Blood of the Mountain dropping from wrong mobs.</li>
+<li>Jesse Masters selling items without quest completion.</li>
+<li>Sentinel Keldara Sunblade attacking while feign death.</li>
+<li>Onkill rep for Steamvault and Shadow Labyrinth.</li>
+<li>Port On Nethery Wing visuals from Trinity.</li>
+<li>Fix damage modifier of Razormaw.</li>
+<li>Prevent Earthmender Wilda to fail quest abruptly.</li>
+<li>Underbog frenzy aggro.</li>
+<li>Add Tailoring condition for the Battlecast Hood Recipe.</li>
+<li>Corrected Snivel Rustrocket's position.</li>
+<li>Removes unused creature 290 data.</li>
+<li>Remove unused SAI from Yor.</li>
+<li>Junk Loot from Water Barrels removed.</li>
+<li>Ferra add in DM:W not dropping correct loot.</li>
+<li>Remove Spire Frostwyrm leftovers.</li>
+<li>Remove the Spire Frostwyrm remnant in alliance side.</li>
+<li>Re-Construct Shadow Labyrinth.</li>
+</ul>	
+		</div>
+		<div class="article">
+		<h2>Core</h2>
+			<ul>
+  <li>Fixed Spiritual Attunement not working with partial overheals.</li>
+  <li>Fixed Battlegear of Eternal Justice set bonus.</li>
+  <li>Implemented ENCHANT_PROC_ATTR_EXCLUSIVE.</li>
+  <li>Send player's own auras before all visible objects.</li>
+  <li>Fixed incorrect damage mod for Heirloom 2H weapons.</li>
+  <li>Make it easier to find FreezeDetector.</li>
+  <li>Remove artificially high minimal update intervals and Allow specifying minimum world updates diff in config.</li>
+  <li>Improve HandleRoster performance.</li>
+  <li>Added error message for death knights attempting to leave their starting zone early.</li>
+  <li>Fixed SMART_EVENT_FRIENDLY_HEALTH_PCT event.</li>
+  <li>Remove channeled auras when caster and target are not on the same map.</li>
+</ul>
+		</div>
+	</div>
+  <footer style="text-align: center;">© zaicopx - 2023&nbsp;</footer>
+<html></html>
+</body>
+</html>
