@@ -92,16 +92,15 @@ blockquote p:last-child {
 
 /* Full size background image */
 body {
+  max-width:800px;
+  margin:25px auto;
   background: #000000; /* fallback color */
   background: url('https://github.com/zaicopx/zaicopx.github.io/raw/main/background.mp4') no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-}
-body {
-  max-width:800px;
-  margin:25px auto;
+  opacity: 0.7; /* fallback opacity */
 }
 header, #content, footer { 
   background: rgba(0,0,0,.8); 
