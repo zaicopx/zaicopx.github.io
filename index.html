@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Storyline for WotLK 3.3.5a</title>
+<meta name="description" content="A backport of the Storyline quest dialog addon for World of Warcraft: Wrath of the Lich King 3.3.5a, with fixes by zaicopx.">
+<meta name="theme-color" content="#070b12">
+<meta property="og:title" content="Storyline for WotLK 3.3.5a">
+<meta property="og:description" content="Cinematic quest dialogs for World of Warcraft 3.3.5a.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9D%84%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;1,400&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #070b12;
+    --glacier: #10202f;
+    --steel: #31404f;
+    --frost: #d6e6f3;
+    --ice: #7fd3f5;
+    --rune: #2c78a8;
+    --gold: #c8a45a;
+    --quest: #4fc46b;
+    --muted: #93a8ba;
+    --display: "Cinzel", "Trajan Pro", "Palatino Linotype", Georgia, serif;
+    --body: "Alegreya", Georgia, "Times New Roman", serif;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse 70% 40% at 75% -5%, #1a3a55 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 0% 30%, #0e2133 0%, transparent 70%),
+      var(--night);
+    color: var(--frost);
+    font-family: var(--body);
+    font-size: 1.125rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--ice); text-underline-offset: 3px; }
+  a:hover { color: #fff; }
+  :focus-visible { outline: 2px solid var(--ice); outline-offset: 3px; border-radius: 2px; }
+
+  h1, h2, h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: #fff;
+  }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.7rem); }
+  h2 { font-size: clamp(1.6rem, 3vw, 2.3rem); margin-bottom: 1rem; }
+  h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
+  p { margin: 0 0 1rem; max-width: 62ch; }
+
+  .wrap { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(7, 11, 18, 0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--steel);
+  }
+  .site-header .wrap {
+    display: flex; align-items: center; gap: 1.5rem;
+    min-height: 3.75rem; flex-wrap: wrap; padding-block: 0.4rem;
+  }
+  .brand {
+    font-family: var(--display); font-weight: 700; font-size: 1.05rem;
+    color: #fff; text-decoration: none; margin-right: auto; letter-spacing: 0.04em;
+  }
+  .site-header nav { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .site-header nav a { color: var(--muted); text-decoration: none; font-size: 1rem; }
+  .site-header nav a:hover { color: #fff; }
+  .lang { display: inline-flex; border: 1px solid var(--steel); border-radius: 4px; overflow: hidden; }
+  .lang button {
+    font: inherit; font-size: 0.9rem; background: transparent; color: var(--muted);
+    border: 0; padding: 0.25rem 0.7rem; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: var(--rune); color: #fff; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-block; font-family: var(--display); font-weight: 600; font-size: 0.95rem;
+    letter-spacing: 0.03em; padding: 0.75rem 1.4rem; border-radius: 3px; text-decoration: none;
+    border: 1px solid var(--ice); cursor: pointer;
+  }
+  .btn-primary { background: var(--ice); color: #06121c; }
+  .btn-primary:hover { background: #fff; color: #06121c; border-color: #fff; }
+  .btn-ghost { background: transparent; color: var(--frost); border-color: var(--steel); }
+  .btn-ghost:hover { border-color: var(--ice); color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; padding-block: clamp(3rem, 8vw, 6rem); }
+  #snow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.55; }
+  .hero .wrap {
+    position: relative;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(2rem, 5vw, 4rem); align-items: center;
+  }
+  .hero-copy p { font-size: 1.25rem; color: #b9cddd; margin-top: 1.25rem; }
+  .hero-actions { display: flex; gap: 0.85rem; flex-wrap: wrap; margin-top: 1.75rem; }
+
+  /* ---------- Quest dialog demo ---------- */
+  .dialog {
+    background: linear-gradient(180deg, rgba(20, 38, 56, 0.94), rgba(9, 17, 27, 0.96));
+    border: 1px solid var(--steel);
+    border-top: 2px solid var(--gold);
+    border-radius: 4px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(127, 211, 245, 0.07);
+    padding: 1.25rem 1.4rem 1.1rem;
+  }
+  .dialog-head { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+  .portrait {
+    flex: none; width: 64px; height: 64px; border-radius: 50%;
+    border: 2px solid var(--gold); background: radial-gradient(circle at 50% 30%, #25506f, #0a1622);
+    overflow: hidden;
+  }
+  .portrait svg { width: 100%; height: 100%; display: block; }
+  .npc { font-family: var(--display); font-size: 1.05rem; color: var(--gold); margin: 0; }
+  .quest-title { font-family: var(--display); font-size: 1.45rem; color: #fff; margin: 0; }
+  .dialog-text {
+    min-height: 9.5rem; margin: 0 0 1rem; max-width: none;
+    font-size: 1.15rem; color: #e9f1f8;
+  }
+  .dialog-foot { display: flex; align-items: center; gap: 0.75rem; min-height: 3rem; }
+  .dialog-status { margin: 0; flex: 1; font-size: 1rem; color: var(--muted); max-width: none; }
+  .dialog-status.ok { color: var(--quest); }
+  .qbtn {
+    width: 2.75rem; height: 2.75rem; border-radius: 4px; display: grid; place-items: center;
+    background: #0b1824; border: 1px solid var(--steel); cursor: pointer; padding: 0; color: var(--muted);
+  }
+  .qbtn svg { width: 1.4rem; height: 1.4rem; }
+  .qbtn.accept { color: var(--quest); border-color: #2f7d44; }
+  .qbtn.accept:hover { background: #12301c; border-color: var(--quest); }
+  .qbtn.decline:hover { color: #fff; border-color: var(--muted); }
+  .qbtn[hidden], .replay[hidden] { display: none; }
+  .replay {
+    font: inherit; font-size: 1rem; background: none; border: 0; color: var(--ice);
+    text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 0;
+  }
+
+  /* ---------- Sections ---------- */
+  .section { padding-block: clamp(3rem, 7vw, 5.5rem); border-top: 1px solid var(--steel); }
+  .section-intro { margin-bottom: 2.25rem; }
+
+  .shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+  .shot { margin: 0; }
+  .shot .frame {
+    position: relative; aspect-ratio: 16 / 10; background: #0a1622; border: 1px solid var(--steel);
+    border-radius: 3px; overflow: hidden; display: grid; place-items: center;
+  }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .shot .ph { display: none; padding: 1rem; text-align: center; color: var(--muted); font-size: 0.95rem; }
+  .shot.noimg img { display: none; }
+  .shot.noimg .ph { display: block; }
+  .shot figcaption { margin-top: 0.7rem; }
+  .shot figcaption span { display: block; color: var(--muted); font-size: 1rem; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); }
+  .fixes { list-style: none; margin: 0; padding: 0; }
+  .fixes li {
+    padding: 0.8rem 0 0.8rem 1.6rem; border-bottom: 1px solid #1b2a38; position: relative;
+  }
+  .fixes li::before {
+    content: ""; position: absolute; left: 0; top: 1.35rem; width: 0.65rem; height: 0.65rem;
+    border: 2px solid var(--quest); border-top: 0; border-left: 0; transform: translateY(-60%) rotate(45deg);
+    width: 0.4rem; height: 0.75rem;
+  }
+  .fixes small { color: var(--muted); font-size: 0.95rem; }
+  .planned { border-left: 2px solid var(--rune); padding-left: 1.25rem; }
+  .planned h3 { color: var(--ice); }
+  .planned ul { margin: 0 0 1rem; padding-left: 1.1rem; }
+  .planned li { margin-bottom: 0.5rem; }
+  .note { color: var(--muted); font-size: 1rem; }
+
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; max-width: 46rem; }
+  .steps li {
+    counter-increment: step; position: relative; padding: 0 0 1.5rem 3.4rem;
+  }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: -0.1rem;
+    width: 2.25rem; height: 2.25rem; border-radius: 50%; border: 1px solid var(--gold);
+    display: grid; place-items: center; font-family: var(--display); color: var(--gold);
+  }
+  .steps li::after {
+    content: ""; position: absolute; left: 1.12rem; top: 2.3rem; bottom: 0.2rem; width: 1px; background: var(--steel);
+  }
+  .steps li:last-child::after { display: none; }
+  .steps strong { font-family: var(--display); font-weight: 600; color: #fff; display: block; margin-bottom: 0.15rem; }
+  .steps p { margin: 0; color: #b9cddd; }
+  code {
+    background: #0e1c2a; border: 1px solid #22364a; border-radius: 3px;
+    padding: 0.05rem 0.4rem; font-size: 0.92em; color: var(--ice); font-family: ui-monospace, Consolas, monospace;
+  }
+
+  .credits { list-style: none; padding: 0; margin: 0; max-width: 46rem; }
+  .credits li { padding: 0.9rem 0; border-bottom: 1px solid #1b2a38; }
+  .credits b { font-family: var(--display); font-weight: 600; color: #fff; }
+
+  footer { border-top: 1px solid var(--steel); padding-block: 2.25rem 3rem; color: var(--muted); font-size: 0.95rem; }
+  footer p { max-width: 70ch; margin-bottom: 0.6rem; }
+
+  @media (max-width: 860px) {
+    .hero .wrap, .two-col { grid-template-columns: minmax(0, 1fr); }
+    .shots { grid-template-columns: minmax(0, 1fr); }
+    .site-header nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    #snow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top">Storyline WotLK</a>
+    <nav aria-label="Main">
+      <a href="#screens" data-id="Screenshots">Screenshots</a>
+      <a href="#changes" data-id="Changes">Changes</a>
+      <a href="#install" data-id="Install">Install</a>
+      <a href="#credits" data-id="Credits">Credits</a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="id" aria-pressed="false">ID</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <canvas id="snow" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="hero-copy">
+        <h1 data-id="Quest dialogs that read like a story, back on WotLK 3.3.5a">Quest dialogs that read like a story, back on WotLK 3.3.5a</h1>
+        <p data-id="A backport of the Storyline addon for World of Warcraft 3.3.5a, with fixes for accepting quests, the dim slider and model scrolling.">A backport of the Storyline addon for World of Warcraft 3.3.5a, with fixes for accepting quests, the dim slider and model scrolling.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" id="dl-link" href="https://github.com/zaicopx/WotLK-Storyline" data-id="Download from GitHub">Download from GitHub</a>
+          <a class="btn btn-ghost" href="#install" data-id="How to install">How to install</a>
+        </div>
+      </div>
+
+      <div class="dialog" aria-live="polite">
+        <div class="dialog-head">
+          <div class="portrait" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><path d="M32 8c-9 0-15 7-15 15 0 4 1 7 3 10-8 3-13 9-14 23h52c-1-14-6-20-14-23 2-3 3-6 3-10 0-8-6-15-15-15z" fill="#0c1a28"/><ellipse cx="32" cy="28" rx="9" ry="10" fill="#1b3a54"/><circle cx="28" cy="27" r="1.6" fill="#7fd3f5"/><circle cx="36" cy="27" r="1.6" fill="#7fd3f5"/></svg>
+          </div>
+          <div>
+            <p class="npc">Scout Halvren</p>
+            <p class="quest-title" id="quest-title">The Frozen Road</p>
+          </div>
+        </div>
+        <p class="dialog-text" id="dialog-text"></p>
+        <div class="dialog-foot">
+          <p class="dialog-status" id="dialog-status"></p>
+          <button class="replay" id="replay" type="button" hidden data-id="Talk to Scout Halvren again">Talk to Scout Halvren again</button>
+          <button class="qbtn decline" id="btn-decline" type="button" aria-label="Decline quest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+          <button class="qbtn accept" id="btn-accept" type="button" aria-label="Accept quest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="screens">
+    <div class="wrap">
+      <div class="section-intro">
+        <h2 data-id="What it looks like in game">What it looks like in game</h2>
+        <p data-id="Storyline replaces the classic quest window with a cinematic dialog: the NPC and your character face each other while the story text plays out. This build brings the Cataclysm and Warlords-era design to the 3.3.5a client.">Storyline replaces the classic quest window with a cinematic dialog: the NPC and your character face each other while the story text plays out. This build brings the Cataclysm and Warlords-era design to the 3.3.5a client.</p>
+      </div>
+      <div class="shots">
+        <figure class="shot">
+          <div class="frame">
+            <img src="https://i.imgur.com/CLbsZjH.jpg" alt="Storyline showing quest rewards" loading="lazy">
+            <div class="ph" data-id="Screenshot not found. Replace it with your own image.">Screenshot not found. Replace it with your own image.</div>
+          </div>
+          <figcaption><h3 data-id="Quest rewards">Quest rewards</h3><span data-id="Pick your reward while the NPC finishes the conversation.">Pick your reward while the NPC finishes the conversation.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="frame">
+            <img src="https://i.imgur.com/qJLSrsT.jpg" alt="Storyline showing a quest in progress" loading="lazy">
+            <div class="ph" data-id="Screenshot not found. Replace it with your own image.">Screenshot not found. Replace it with your own image.</div>
+          </div>
+          <figcaption><h3 data-id="Quest in progress">Quest in progress</h3><span data-id="See what is still needed when you return before finishing.">See what is still needed when you return before finishing.</span></figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="frame">
+            <img src="https://i.imgur.com/BkRHVPt.jpg" alt="Storyline showing a class trainer" loading="lazy">
+            <div class="ph" data-id="Screenshot not found. Replace it with your own image.">Screenshot not found. Replace it with your own image.</div>
+          </div>
+          <figcaption><h3 data-id="Class trainer">Class trainer</h3><span data-id="Trainers get the same dialog treatment.">Trainers get the same dialog treatment.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="changes">
+    <div class="wrap two-col">
+      <div>
+        <h2 data-id="What this fork fixes">What this fork fixes</h2>
+        <ul class="fixes">
+          <li><span data-id="The green check button now accepts the quest.">The green check button now accepts the quest.</span> <small data-id="(v3.3.1)">(v3.3.1)</small></li>
+          <li data-id="The X button closes the dialog.">The X button closes the dialog.</li>
+          <li data-id="The dim slider works as expected.">The dim slider works as expected.</li>
+          <li data-id="Scrolling the mouse wheel no longer resizes the model.">Scrolling the mouse wheel no longer resizes the model.</li>
+          <li data-id="The NPC and your character face the right direction.">The NPC and your character face the right direction.</li>
+        </ul>
+      </div>
+      <div class="planned">
+        <h3 data-id="Planned, not released yet">Planned, not released yet</h3>
+        <ul>
+          <li data-id="Per-zone backgrounds, starting with vanilla locations, with an option to turn them on or off. Right now the background is only tinted by faction.">Per-zone backgrounds, starting with vanilla locations, with an option to turn them on or off. Right now the background is only tinted by faction.</li>
+          <li data-id="A friendship and reputation bar like the one in Retail.">A friendship and reputation bar like the one in Retail.</li>
+        </ul>
+        <p class="note" data-id="See the full history in the changelog on GitHub.">See the full history in the changelog on GitHub.</p>
+        <a href="https://github.com/zaicopx/WotLK-Storyline/blob/master/changelog.md" data-id="Open changelog">Open changelog</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="install">
+    <div class="wrap">
+      <h2 data-id="Install in four steps">Install in four steps</h2>
+      <ol class="steps">
+        <li>
+          <strong data-id="Download the addon">Download the addon</strong>
+          <p><span data-id="Open the repository, choose Code, then Download ZIP.">Open the repository, choose Code, then Download ZIP.</span> <a href="https://github.com/zaicopx/WotLK-Storyline" data-id="Go to the repository">Go to the repository</a></p>
+        </li>
+        <li>
+          <strong data-id="Extract and rename the folder">Extract and rename the folder</strong>
+          <p><span data-id="Rename the extracted folder to">Rename the extracted folder to</span> <code>Storyline</code> <span data-id="so it matches Storyline.toc.">so it matches Storyline.toc.</span></p>
+        </li>
+        <li>
+          <strong data-id="Copy it into AddOns">Copy it into AddOns</strong>
+          <p><code>World of Warcraft/Interface/AddOns/Storyline</code></p>
+        </li>
+        <li>
+          <strong data-id="Start the game">Start the game</strong>
+          <p data-id="Make sure Storyline is ticked on the AddOns screen at character select, then talk to any quest giver.">Make sure Storyline is ticked on the AddOns screen at character select, then talk to any quest giver.</p>
+        </li>
+      </ol>
+      <p class="note" data-id="Found a bug? Open an issue on GitHub with the addon version and what you clicked.">Found a bug? Open an issue on GitHub with the addon version and what you clicked.</p>
+    </div>
+  </section>
+
+  <section class="section" id="credits">
+    <div class="wrap">
+      <h2 data-id="Credits">Credits</h2>
+      <p data-id="This fork stands on the work of others. Please support the original authors.">This fork stands on the work of others. Please support the original authors.</p>
+      <ul class="credits">
+        <li><b>Lanrutcon</b> <span data-id="made the Cataclysm backport.">made the Cataclysm backport.</span> <a href="https://github.com/Lanrutcon/Backport-Storyline">GitHub</a></li>
+        <li><b>EllypseCelweBelore</b> &amp; <b>Kajisensei</b> <span data-id="created the original Storyline (WoD version v1.1.1) for Total RP 3.">created the original Storyline (WoD version v1.1.1) for Total RP 3.</span> <a href="https://wow.curseforge.com/addons/total-rp-3-storyline/">CurseForge</a></li>
+        <li><b>shadovvs</b> <span data-id="maintains the WotLK 3.3.5a backport this fork is based on.">maintains the WotLK 3.3.5a backport this fork is based on.</span> <a href="https://github.com/shadovvs/WotLK-Storyline">GitHub</a></li>
+        <li><b>zaicopx</b> <span data-id="maintains this fork and the fixes listed above.">maintains this fork and the fixes listed above.</span> <a href="https://github.com/zaicopx/WotLK-Storyline">GitHub</a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p data-id="Unofficial fan project. World of Warcraft and Wrath of the Lich King are trademarks of Blizzard Entertainment, Inc. This site is not affiliated with or endorsed by Blizzard.">Unofficial fan project. World of Warcraft and Wrath of the Lich King are trademarks of Blizzard Entertainment, Inc. This site is not affiliated with or endorsed by Blizzard.</p>
+    <p><a href="https://github.com/zaicopx">github.com/zaicopx</a></p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---- Settings you may want to change ---- */
+  var REPO_URL = "https://github.com/zaicopx/WotLK-Storyline";
+  var BRANCH = "master"; // change to the branch that holds your latest release
+  document.getElementById("dl-link").href = REPO_URL + "/archive/refs/heads/" + BRANCH + ".zip";
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- Language toggle (English / Bahasa Indonesia) ---- */
+  var ID_TEXT = {
+    dialog: "Jalur ke Dragonblight tertutup es sejak tiga hari lalu. Kalau karavan tidak bergerak sebelum badai berikutnya, Valgarde akan kelaparan. Bawa lentera ini, cari apa yang menahan es itu, dan kembalilah hidup-hidup.",
+    accepted: "Quest diterima: The Frozen Road",
+    declined: "Quest ditolak. Bicaralah lagi dengan Scout Halvren jika berubah pikiran.",
+    accept: "Terima quest",
+    decline: "Tolak quest",
+    dl: "Unduh dari GitHub"
+  };
+  var EN_TEXT = {
+    dialog: "The pass to Dragonblight has been sealed by ice for three days. If the caravan doesn\u2019t move before the next storm, Valgarde will starve. Take this lantern, find what is holding the frost, and come back alive.",
+    accepted: "Quest accepted: The Frozen Road",
+    declined: "Quest declined. Talk to Scout Halvren again if you change your mind.",
+    accept: "Accept quest",
+    decline: "Decline quest"
+  };
+  var lang = "en";
+  var state = "idle"; // idle | accepted | declined
+
+  var translatable = document.querySelectorAll("[data-id]");
+  translatable.forEach(function (el) { el.setAttribute("data-en", el.textContent); });
+
+  function t(key) { return (lang === "id" ? ID_TEXT : EN_TEXT)[key]; }
+
+  function setLang(next) {
+    lang = next;
+    document.documentElement.lang = next;
+    translatable.forEach(function (el) {
+      el.textContent = next === "id" ? el.getAttribute("data-id") : el.getAttribute("data-en");
+    });
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === next));
+    });
+    btnAccept.setAttribute("aria-label", t("accept"));
+    btnDecline.setAttribute("aria-label", t("decline"));
+    if (state === "idle") { startTyping(); }
+    else { textEl.textContent = t("dialog"); statusEl.textContent = t(state); }
+    try { localStorage.setItem("lang", next); } catch (e) {}
+  }
+
+  /* ---- Quest dialog demo ---- */
+  var textEl = document.getElementById("dialog-text");
+  var statusEl = document.getElementById("dialog-status");
+  var btnAccept = document.getElementById("btn-accept");
+  var btnDecline = document.getElementById("btn-decline");
+  var replay = document.getElementById("replay");
+  var timer = null;
+
+  function stopTyping() { if (timer) { clearInterval(timer); timer = null; } }
+
+  function startTyping() {
+    stopTyping();
+    var full = t("dialog");
+    if (reduceMotion) { textEl.textContent = full; return; }
+    var i = 0;
+    textEl.textContent = "";
+    timer = setInterval(function () {
+      i += 1;
+      textEl.textContent = full.slice(0, i);
+      if (i >= full.length) { stopTyping(); }
+    }, 22);
+  }
+
+  function resolve(choice) {
+    stopTyping();
+    state = choice; // "accepted" or "declined"
+    textEl.textContent = t("dialog");
+    statusEl.textContent = t(choice);
+    statusEl.className = "dialog-status" + (choice === "accepted" ? " ok" : "");
+    btnAccept.hidden = true;
+    btnDecline.hidden = true;
+    replay.hidden = false;
+    replay.focus();
+  }
+
+  btnAccept.addEventListener("click", function () { resolve("accepted"); });
+  btnDecline.addEventListener("click", function () { resolve("declined"); });
+  replay.addEventListener("click", function () {
+    state = "idle";
+    statusEl.textContent = "";
+    statusEl.className = "dialog-status";
+    replay.hidden = true;
+    btnAccept.hidden = false;
+    btnDecline.hidden = false;
+    btnAccept.focus();
+    startTyping();
+  });
+
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { setLang(b.getAttribute("data-lang")); });
+  });
+
+  var saved = null;
+  try { saved = localStorage.getItem("lang"); } catch (e) {}
+  if (saved === "id") { setLang("id"); } else { startTyping(); }
+
+  /* ---- Snowfall (hero only, very light) ---- */
+  var canvas = document.getElementById("snow");
+  if (canvas && !reduceMotion) {
+    var ctx = canvas.getContext("2d");
+    var flakes = [];
+    var w = 0, h = 0, running = true;
+
+    function resize() {
+      var r = canvas.getBoundingClientRect();
+      w = canvas.width = r.width;
+      h = canvas.height = r.height;
+    }
+    function make() {
+      return { x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.8 + 0.5,
+               s: Math.random() * 0.5 + 0.25, d: Math.random() * Math.PI * 2 };
+    }
+    resize();
+    for (var n = 0; n < 60; n++) { flakes.push(make()); }
+    window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", function () {
+      running = !document.hidden;
+      if (running) { requestAnimationFrame(tick); }
+    });
+
+    function tick() {
+      if (!running) { return; }
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#d6e6f3";
+      for (var k = 0; k < flakes.length; k++) {
+        var f = flakes[k];
+        f.y += f.s;
+        f.d += 0.01;
+        f.x += Math.sin(f.d) * 0.3;
+        if (f.y > h + 4) { f.y = -4; f.x = Math.random() * w; }
+        ctx.globalAlpha = 0.35 + f.r * 0.2;
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  }
+
+  /* ---- Screenshots that fail to load fall back to a placeholder ---- */
+  document.querySelectorAll(".shot img").forEach(function (img) {
+    function fail() { img.closest(".shot").classList.add("noimg"); }
+    img.addEventListener("error", fail);
+    if (img.complete && img.naturalWidth === 0) { fail(); }
+  });
+})();
+</script>
+</body>
+</html>
